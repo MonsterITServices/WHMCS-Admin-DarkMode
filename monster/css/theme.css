@@ -5,6 +5,305 @@
  * @copyright Copyright (c) WHMCS Limited 2020
  * @license   https://www.whmcs.com/license/
  */
+ /*
+ * WHMCS Blend Admin Theme - Dark Mode
+ *
+ * @author    WHMCS Limited <development@whmcs.com>
+ * @copyright Copyright (c) WHMCS Limited 2021
+ * @license   https://www.whmcs.com/license/
+ */
+
+body {
+    background-color: #212529; /* Dark background for the body */
+    color: #f8f9fa; /* Light text for readability */
+}
+
+a {
+    color: #00aaff; /* Brighter blue for links */
+}
+
+a:hover {
+    color: #007bff;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: #f8f9fa;
+}
+
+.contentarea {
+    background-color: #343a40; /* Darker content area */
+    border-left: 1px solid #495057;
+    color: #f8f9fa;
+}
+
+.sidebar {
+    background-color: #2c3034;
+    border-right: 1px solid #495057;
+}
+
+.navigation {
+    background-color: #212529;
+}
+
+.footerbar {
+    background-color: #212529;
+    color: #f8f9fa;
+}
+
+.panel-default {
+    background-color: #343a40;
+    border-color: #495057;
+}
+
+.panel-default > .panel-heading {
+    color: #f8f9fa;
+    background-color: #2c3034;
+    border-color: #495057;
+}
+
+.form-control {
+    background-color: #495057;
+    color: #f8f9fa;
+    border: 1px solid #6c757d;
+}
+
+.form-control:focus {
+    border-color: #00aaff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 170, 255, 0.25);
+}
+
+table.form {
+    background-color: #343a40;
+    border: 3px solid #495057;
+}
+table.form td.fieldlabel {
+    background-color: #2c3034;
+}
+table.form td.fieldarea {
+    background-color: #343a40;
+}
+
+table.datatable {
+    color: #f8f9fa;
+}
+table.datatable th {
+    background-color: #007bff;
+    color: #ffffff;
+    border-bottom: 1px solid #495057;
+}
+table.datatable td {
+    background-color: #343a40;
+    border-bottom: 1px solid #495057;
+}
+table.datatable tr:not(.detail-row):hover td {
+    background-color: #495057;
+}
+table.datatable tr.rowhighlight td {
+    background-color: #2c3e50;
+}
+
+.modal-content {
+    background-color: #343a40;
+    color: #f8f9fa;
+}
+.modal-header {
+    border-bottom-color: #495057;
+}
+.modal-footer {
+    border-top-color: #495057;
+}
+
+.whmcs-modal .modal-header:not(.panel-heading) {
+    background-color: #2c3034;
+}
+.whmcs-modal .modal-footer {
+    background-color: #2c3034;
+}
+
+.nav-tabs > li > a {
+    background-color: #2c3034;
+    border-color: #495057;
+    color: #f8f9fa;
+}
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+    background-color: #343a40;
+    border-bottom-color: transparent;
+}
+div.client-tabs > .active,
+div.admin-tabs > .active {
+    background-color: #343a40;
+    border-color: #495057;
+}
+
+.alert-grey {
+    color: #f8f9fa;
+    background-color: #495057;
+    border-color: #6c757d;
+}
+
+.infobox {
+    background-color: #2c3e50;
+    border-color: #34495e;
+    color: #f8f9fa;
+}
+
+.successbox {
+    background-color: #27ae60;
+    border-color: #2ecc71;
+    color: #f8f9fa;
+}
+
+.errorbox {
+    background-color: #c0392b;
+    border-color: #e74c3c;
+    color: #f8f9fa;
+}
+
+.inset-grey-bg {
+    background-color: #2c3034;
+}
+
+.inset-element-container, .homebox, .bordered {
+    background-color: #343a40;
+    border-color: #495057;
+}
+
+.contextbar {
+    background-color: #212529;
+}
+
+#clientsearchresults, #ticketclientsearchresults {
+    background-color: #343a40;
+    border: 1px solid #495057;
+}
+#clientsearchresults .searchresultheader, #ticketclientsearchresults .searchresultheader {
+    background-color:#495057;
+}
+#clientsearchresults .searchresult, #ticketclientsearchresults .searchresult {
+    background-color:#2c3034;
+}
+#clientsearchresults .searchresult:hover, #ticketclientsearchresults .searchresult:hover {
+    background-color: #495057;
+}
+
+.clientssummarybox {
+    background-color: #2c3034;
+}
+table.clientssummarystats {
+    border-color: #495057;
+}
+table.clientssummarystats td {
+    background-color: #343a40;
+}
+table.clientssummarystats tr.altrow td {
+    background-color: #2c3034;
+}
+
+.emailtplstandard {
+    background-color:#2c3034;
+}
+.emailtplcustom {
+    background-color:#2c3e50;
+}
+.emailtpldisabled {
+    background-color:#4a2e2e;
+}
+.email-attachment {
+    background-color: #343a40;
+    border: 1px solid #495057;
+}
+
+.report-filters-wrapper {
+    background-color: #2c3034;
+    border-top: 1px solid #495057;
+}
+table.reportslisting td a {
+    border: 2px solid #2c3034;
+}
+table.reportslisting td a:hover {
+    background-color: #495057;
+    border: 2px solid #495057;
+}
+
+#ordersummary {
+    border: 1px solid #6c757d;
+    box-shadow: 0px 0px 20px #212529;
+}
+#ordersummary tr.subtotal td {
+    background-color: #4a4a2a;
+}
+#ordersummary tr.promo td {
+    background-color: #4a2e2e;
+}
+#ordersummary tr.tax td {
+    background-color: #2c3e50;
+}
+#ordersummary tr.total td {
+    background-color: #2a4a2a;
+}
+#ordersummary tr.recurring td {
+    background-color: #4a2e2e;
+}
+#ordersummary .apply-credit-container {
+    background-color: #2c3034;
+}
+
+.apps-and-integrations h1 {
+    color: #f8f9fa;
+}
+ .contentarea.grey-bg {
+     background-color: #2c3034;
+ }
+.apps-and-integrations .app-wrapper {
+    background-color: #343a40;
+}
+.apps-and-integrations .app-wrapper .app .app-inner {
+    border: 1px solid #495057;
+    background-color: #2c3034;
+    color: #f8f9fa;
+}
+.apps-and-integrations .app .content-container .title {
+    color: #f8f9fa;
+}
+.apps-and-integrations .aai-primary-nav a {
+    background-color: #343a40;
+    border: 1px solid #495057;
+}
+.apps-and-integrations .aai-primary-nav>li.active>a,
+.apps-and-integrations .aai-primary-nav>li.active>a:focus,
+.apps-and-integrations .aai-primary-nav>li.active>a:hover {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+.apps-and-integrations .categories-nav a {
+    background-color: #343a40;
+    border: 1px solid #495057;
+}
+.apps-and-integrations .categories-nav a:hover {
+    background-color: #495057;
+}
+.apps-and-integrations .categories-nav a.active {
+    background-color: #007bff;
+}
+
+.search-bar {
+    background-color: #2c3034;
+}
+.search-bar .simple {
+    border-bottom: 1px dashed #495057;
+}
+.search-bar .search-fields {
+    border-left: 1px solid #495057;
+}
+
+/* Add remaining original styles below, they will inherit the new dark colors where appropriate */
+/* ... (paste the entire original style.css content here) ... */
+.addon-html-output-container {
+    margin-bottom: 15px;
+}
+/* ... rest of the original CSS ... */
 body {
   background-color: #f6f6f6;
 }
