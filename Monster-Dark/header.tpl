@@ -14,7 +14,6 @@
     <link href="{\WHMCS\Utility\Environment\WebHelper::getBaseUrl()}/assets/css/fontawesome-all.min.css" rel="stylesheet" />
     <script type="text/javascript" src="templates/{$template}/js/vendor.min.js?v={$versionHash}"></script>
     <script type="text/javascript" src="templates/{$template}/js/scripts.min.js?v={$versionHash}"></script>
-    <script src="https://unpkg.com/@phosphor-icons/web@2.1.1/src/index.js"></script>
     <script>
         var datepickerformat = "{$datepickerformat}",
             csrfToken="{$csrfToken}",
@@ -35,7 +34,7 @@
 
 </head>
 <body class="{if empty($sidebar)}no-sidebar{/if}{if !empty($globalAdminWarningMsg)} has-warning-banner{/if}" data-phone-cc-input="{if !empty($phoneNumberInputStyle)}{$phoneNumberInputStyle}{/if}">
-<div id="overlay"></div>
+
     {$headeroutput}
 
     <div class="alert alert-warning global-admin-warning">

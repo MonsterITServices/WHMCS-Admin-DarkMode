@@ -101,66 +101,65 @@ var blendIntelliSearch = {
         searchMoreTpl: '.search-more-results[data-type="placeholder"]',
     },
 
-    init: function () {
+    init: function() {
         var self = blendIntelliSearch;
-        $(self.refs.value).focus(function (e) {
+
+        $(self.refs.value).focus(function(e) {
             self.inputExpand();
         });
 
-        $(self.refs.value).keyup(function () {
+        $(self.refs.value).keyup(function(){
             self.inputKeyUp();
         });
 
-        $(self.refs.form + ' form').submit(function (e) {
+        $(self.refs.form + ' form').submit(function(e) {
             e.preventDefault();
             self.search();
         });
 
-        $(document).keyup(function (e) {
+        $(document).keyup(function(e) {
             if (e.keyCode === 27 && $('#intelliSearchForm').hasClass('active')) {
                 self.close();
             }
         });
 
-        $(self.refs.body).click(function (e) {
+        $(self.refs.body).click(function(e) {
             if ($(self.refs.form).hasClass('active') && !$(e.target).closest(self.refs.form + ',' + self.refs.results).length) {
                 self.close();
             }
         });
 
-        $(self.refs.close).click(function (e) {
+        $(self.refs.close).click(function(e) {
             self.close();
         });
 
         $(self.refs.realtime).bootstrapSwitch()
-            .on('switchChange.bootstrapSwitch', function (event, state) {
+            .on('switchChange.bootstrapSwitch', function(event, state) {
                 WHMCS.http.jqClient.post($(this).data('url'), 'token=' + csrfToken + '&autosearch=' + state);
             });
 
         $(self.refs.hideinactive).bootstrapSwitch()
-            .on('switchChange.bootstrapSwitch', function (event, state) {
+            .on('switchChange.bootstrapSwitch', function(event, state) {
                 var valueOfField = state ? 1 : 0;
                 $('#intelliSearchHideInactive').attr('value', valueOfField);
                 self.search();
             });
 
-        $(self.refs.resultheadings).click(function (e) {
+        $(self.refs.resultheadings).click(function(e) {
             self.toggleResultSet($(this));
         });
 
-        $(blendIntelliSearch.refs.results + ' .collapse-toggle').click(function (e) {
+        $(blendIntelliSearch.refs.results + ' .collapse-toggle').click(function(e) {
             e.preventDefault();
             blendIntelliSearch.toggleAllResultSets();
         });
 
-        $(document).on('click', blendIntelliSearch.refs.expandbtn, function (e) {
+        $(document).on('click', blendIntelliSearch.refs.expandbtn, function(e) {
             e.preventDefault();
             blendIntelliSearch.expandResults($(this), $(this).data('type'));
         });
     },
-    inputExpand: function () {
-        $('#intelliSearchForm').addClass('active')
-
+    inputExpand: function() {
         var $form = $(this.refs.form);
         if ($form.data('expanded')) {
             return;
@@ -168,65 +167,81 @@ var blendIntelliSearch = {
 
         var $targetOffset = $form.offset();
 
+        var $originalLeft = $targetOffset.left;
         $targetOffset.left -= 100;
 
         $form
             .data('expanded', true)
             .data('leftpos', $targetOffset.left)
-
+            .css({
+                position: 'absolute',
+                top: $targetOffset.top,
+                left: $originalLeft
+            })
+            .animate({'left': $targetOffset.left}, 200, function() {
+                if ($('#btnNavbarToggle').is(':visible')) {
+                    $form.delay(10).queue(function (next) {
+                        $(this).addClass('active full-width');
+                        next();
+                    });
+                } else {
+                    $form.addClass('active')
+                        .css('width', $(window).width() - $targetOffset.left - 5);
+                }
+            });
 
         if ($(this.refs.value).val()) {
             $(this.refs.results).slideDown();
         }
     },
-    inputKeyUp: function () {
+    inputKeyUp: function() {
         clearTimeout(this.typingTimer);
         if ($(this.refs.value).val().replace(/\s/g, '').length >= 3 && $('#intelliSearchRealtime').is(':checked')) {
             this.typingTimer = setTimeout(this.search, 750);
         }
     },
-    showLoader: function () {
+    showLoader: function() {
         $(this.refs.form).find('.loader').removeClass('fa-search')
             .addClass('fa-spinner fa-spin');
     },
-    endLoader: function () {
+    endLoader: function() {
         $(this.refs.form).find('.loader').addClass('fa-search')
             .removeClass('fa-spinner fa-spin');
     },
-    resetResults: function () {
+    resetResults: function() {
         $(this.refs.searchResults)
             .find('h5').hide().end()
             .find('ul li:not(.template)').remove().end()
             .find('.search-more-results').remove();
     },
-    getResultTypes: function () {
+    getResultTypes: function() {
         var types = [];
-        $('.search-results ul').each(function (index) {
+        $('.search-results ul').each(function(index) {
             types.push($(this).data('type'));
         });
         return types;
     },
-    getResultTarget: function (type) {
+    getResultTarget: function(type) {
         return $(this.refs.searchResults + ' ul[data-type="' + type + '"]');
     },
-    getNumResults: function (type) {
+    getNumResults: function(type) {
         return this.getResultTarget(type).find('li:not(.template)').length;
     },
-    getTotalResults: function () {
+    getTotalResults: function() {
         var $target = $(this.refs.searchResults + ' ul');
         return $target.find('li:not(.template)').length;
     },
-    getTemplateByType: function (type) {
+    getTemplateByType: function(type) {
         var template = this.getResultTarget(type).find('li.template').clone();
         template.removeClass('template');
         return template;
     },
-    renderResults: function (type, data) {
+    renderResults: function(type, data) {
         if (data.length == 0) {
             return;
         }
         var template = this.getTemplateByType(type);
-        $.each(data, function (index, result) {
+        $.each(data, function(index, result) {
             if (typeof result === 'string') {
                 obj = '<li>' + result + '</li>';
             } else {
@@ -241,7 +256,7 @@ var blendIntelliSearch = {
             this.showExpand(type, remainingResults);
         }
     },
-    showExpand: function (type, remainingResults) {
+    showExpand: function(type, remainingResults) {
         var showMoreOf = $(this.refs.expand).val();
         if (showMoreOf == type) {
             return;
@@ -255,17 +270,17 @@ var blendIntelliSearch = {
         cloneRow.html(stringValue);
         this.addResult(type, cloneRow);
     },
-    addResult: function (type, obj) {
+    addResult: function(type, obj) {
         this.getResultTarget(type).append(obj);
     },
-    mergeResultData: function (result, data) {
+    mergeResultData: function(result, data) {
         str = result.html();
-        $.each(data, function (key, value) {
+        $.each(data, function(key, value) {
             str = str.replace(new RegExp('\\[' + key + '\\]', 'g'), value);
         });
         return result.html(str);
     },
-    search: function (expandType) {
+    search: function(expandType) {
         var self = blendIntelliSearch;
 
         if (self.activeSearch) {
@@ -283,32 +298,32 @@ var blendIntelliSearch = {
         WHMCS.http.jqClient.jsonPost({
             url: $(self.refs.form + ' form').attr('action'),
             data: $(self.refs.form + ' form').serialize(),
-            success: function (results) {
+            success: function(results) {
                 var showMoreOf = $(self.refs.expand).val();
                 if (!showMoreOf) {
                     self.resetResults();
                 }
 
-                $.each(self.getResultTypes(), function (index, type) {
+                $.each(self.getResultTypes(), function(index, type) {
                     self.renderResults(type, results[type]);
                 });
 
                 self.searchComplete(true);
             },
-            warning: function (warningMsg) {
+            warning: function(warningMsg) {
                 $(self.refs.results).find('.search-warning')
                     .find('.warning-msg').html(warningMsg);
                 self.searchComplete(false, '.search-warning');
             },
-            error: function (errorMsg) {
+            error: function(errorMsg) {
                 self.searchComplete(false, '.error');
             },
-            fail: function (failMsg) {
+            fail: function(failMsg) {
                 self.searchComplete(false, '.session-expired');
             }
         });
     },
-    searchComplete: function (success, revealSelector) {
+    searchComplete: function(success, revealSelector) {
         if (success) {
             var $numSearchResults = this.getTotalResults();
             $(this.refs.results).find('.search-result-count').html($numSearchResults);
@@ -329,13 +344,11 @@ var blendIntelliSearch = {
 
         this.activeSearch = false;
     },
-    expandResults: function (target, type) {
+    expandResults: function(target, type) {
         target.remove();
         this.search(type);
     },
-    close: function () {
-        $('#intelliSearchForm').removeClass('active');
-
+    close: function() {
         var $form = $(this.refs.form);
         $(this.refs.results).slideUp();
         $form.css({
@@ -352,7 +365,7 @@ var blendIntelliSearch = {
         $('.logo').focus();
         clearTimeout(this.typingTimer);
     },
-    toggleResultSet: function (el) {
+    toggleResultSet: function(el) {
         var list = el.next('ul');
         if (list.is(':visible')) {
             list.slideUp();
@@ -371,7 +384,7 @@ var blendIntelliSearch = {
         }
 
     },
-    toggleAllResultSets: function () {
+    toggleAllResultSets: function() {
         var $visibleCount = $(this.refs.results + ' h5:visible:not(.collapsed)').length;
         var $toggle = $(this.refs.results + ' .collapse-toggle');
         if ($visibleCount == 0) {
@@ -388,186 +401,73 @@ var blendIntelliSearch = {
 
 $(document).ready(blendIntelliSearch.init);
 
-const desktop = window.matchMedia('(min-width: 1200px)')
-const animationSpeed = 250;
-$(document).ready(() => {
-    const navbar = document.querySelector('.navigation')
-    const navigation = document.querySelector('.navbar-new')
-    const navToggle = document.querySelector('.navigation .nav-toggle')
-    const quicksearch = document.querySelector('[data-quicksearch]')
-    const searchInput = document.querySelector('#intelliSearchForm input.quicksearch')
-    const overlay = document.querySelector('#overlay')
+var blendNav = {
+    refs: {
+        toggle: '#btnNavbarToggle',
+        navbar: '.navigation',
+        collapse: '.navigation .navbar-collapse',
+        collapseMenuItem: '.navigation .navbar-collapse li.has-dropdown > a',
+        collapseMenuListItem: '.navigation .navbar-collapse li.has-dropdown > ul li:not(.expand) > a',
+        backdrop: '#nav-backdrop',
+    },
 
-    const closeMenu = () => {
-        navToggle.classList.remove('active');
-        navigation.classList.remove('active');
-        navigation.classList.add('active-out');
+    init: function() {
+        var self = blendNav;
 
-        setTimeout(() => {
-            navigation.classList.remove('active-out')
-            overlay.classList.remove('active');
-        }, animationSpeed)
+        $(self.refs.toggle).click(function(e) {
+            e.preventDefault();
+            self.toggleNavbar();
+        });
 
-        document.body.classList.remove('mobile-active');
-    }
-
-    document.addEventListener('click', e => {
-
-        const isDropdownButton = e.target.closest("[data-dropdown-btn]")
-
-        if (!isDropdownButton && e.target.closest("[data-dropdown]") != null) return
-
-        let currentDropdown
-
-        if (isDropdownButton) {
-
-            e.preventDefault()
-            if (desktop.matches) {
-
-                currentDropdown = e.target.closest("[data-dropdown]")
-                currentDropdown.classList.toggle("active")
-                const submenus = currentDropdown.querySelectorAll('.has-dropdown');
-
-                submenus.forEach((submenu) => {
-                    const link_href = submenu.querySelector('a[data-dropdown-btn]')
-                        .getAttribute('href');
-
-                    submenu.addEventListener('click', () => {
-                        window.location.href = link_href;
-                    });
-
-                    submenu.addEventListener('mouseenter', () => {
-                        submenu.classList.add('active');
-                    });
-
-                    submenu.addEventListener('mouseleave', () => {
-                        setTimeout(() => {
-                            if (!submenu.matches(':hover')) {
-                                submenu.classList.remove('active');
-                            }
-                        }, 35)
-                    });
-                });
-
-            } else {
-                const dropdown = e.target.closest("[data-dropdown]").querySelector("[data-dropdown-menu]");
-                let prevMenu = dropdown.parentElement.parentElement;
-
-                currentDropdown = e.target.closest("[data-dropdown]").querySelector("[data-dropdown-menu]").cloneNode(true);
-
-                if (e.target.closest(".nav-icons"))
-                    prevMenu = document.querySelector('.navbar-new > ul')
-
-                const backButtonText = e.target.closest('[data-dropdown-btn]').dataset.title;
-                const backButton = document.createElement('li');
-
-                backButton.innerHTML = `<a class="menu-back-button"><i class="ph ph-caret-left"></i> ${backButtonText}</a>`;
-                backButton.addEventListener("click", () => {
-                    currentDropdown.classList.add('menu-secondary-hidden');
-
-                    setTimeout(() => {
-                        prevMenu.classList.remove('menu-primary-hidden');
-                    })
-
-                    setTimeout(() => {
-                        navigation.removeChild(navigation.lastElementChild);
-                    }, 500)
-                })
-
-
-                if (currentDropdown) {
-                    currentDropdown.classList.add('menu-secondary-hidden');
-                    currentDropdown.prepend(backButton);
-
-                    prevMenu.classList.add('menu-primary-hidden');
-
-                    navigation.appendChild(currentDropdown);
-                    setTimeout(() => {
-                        currentDropdown.classList.remove('menu-secondary-hidden');
-                    })
-
-                }
+        $(self.refs.collapseMenuItem).click(function(e) {
+            if ($(self.refs.toggle).is(':visible')) {
+                e.preventDefault();
+                $(this).parent('li').toggleClass('expanded');
             }
+        });
 
+        $(self.refs.collapseMenuListItem).click(function() {
+            self.toggleNavbar();
+        });
 
+        self.fixNavWidths();
+    },
+
+    toggleNavbar: function() {
+        if ($(this.refs.collapse).is(':visible')) {
+            $(this.refs.collapse).hide();
+            $(this.refs.backdrop).remove();
+            $('html, body').css('overflow', 'auto');
+            $(this).removeClass('active');
         } else {
-            const activeDropdown = navigation.querySelector('[data-dropdown].active')
-            if (desktop.matches && activeDropdown)
-                activeDropdown.classList.remove("active")
+            var $topPosition = $(this.refs.navbar).offset().top + 45;
+            $(this.refs.collapse).css({
+                top: $topPosition,
+                height: $(window).height() - $topPosition
+            }).show();
+            $(document.createElement('div'))
+                .attr('id', 'nav-backdrop')
+                .addClass('modal-backdrop nav-modal-backdrop')
+                .css('opacity', '0.5')
+                .css('position', 'absolute')
+                .css('top', $topPosition)
+                .appendTo('body');
+            $('html, body').css('overflow', 'hidden');
+            $(this).addClass('active');
         }
+    },
 
-        const checkSubMenu = (dropdown) => {
-            let foundSubMenu
-            dropdown.querySelectorAll('[data-dropdown-menu] [data-dropdown]').forEach(el => {
-                if (el === currentDropdown) foundSubMenu = el
-            })
-            return foundSubMenu
-        }
-
-        document.querySelectorAll("[data-dropdown].active").forEach(dropdown => {
-            if (dropdown === currentDropdown || currentDropdown === checkSubMenu(dropdown)) return
-
-            dropdown.classList.remove("active")
-        })
-
-    })
-
-
-    searchInput.addEventListener('focus', () => {
-        closeMenu()
-
-        navbar.classList.add('search-active')
-        quicksearch.classList.add('active')
-    })
-
-    searchInput.addEventListener('blur', () => {
-        navbar.classList.remove('search-active')
-        quicksearch.classList.remove('active')
-    })
-
-    navToggle.addEventListener('click', e => {
-
-
-        navToggle.classList.toggle('active');
-
-        if (navigation.classList.contains('active')) {
-            closeMenu()
-        } else {
-            navigation.classList.add('active');
-        }
-
-        overlay.classList.toggle('active');
-        document.body.classList.toggle('mobile-active');
-
-        overlay.addEventListener('click', () => {
-            closeMenu()
-        })
-    })
-
-    const reset = () => {
-        if (desktop.matches && navigation.lastElementChild.hasAttribute("data-dropdown-menu")) {
-            navigation.removeChild(navigation.lastElementChild);
-            navigation.querySelector('ul').className = '';
-        } else if (desktop.matches) {
-            navToggle.classList.remove('active');
-            navigation.classList.remove('active');
-            overlay.classList.remove('active');
-            document.querySelector('.navigation .menu-right').prepend(quicksearch)
-        } else {
-            document.querySelectorAll("[data-dropdown].active").forEach(dropdown => {
-                dropdown.classList.remove("active")
-            })
-
-            document.querySelector('.mobile-nav .quick-search-item').append(quicksearch)
+    fixNavWidths: function() {
+        if ($(window).width() >= 1260) {
+            $(this.refs.collapse + ' > ul > li:not(.bt)').each(function(index) {
+                $(this).css('width', $(this).width() + 4);
+            });
         }
     }
+};
 
-    reset();
+$(document).ready(blendNav.init);
 
-    window.addEventListener('resize', () => {
-        reset();
-    })
-})
 var blendSidebar = {
     refs: {
         sidebar: '#sidebar',
